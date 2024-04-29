@@ -56,10 +56,15 @@ from datetime import datetime
 
 # COMMAND ----------
 
+# Seleciona o banco de dados 'olist' para uso
+table_name = 'inter_sales'
+spark.sql('USE olist')
+spark.sql(f'DROP TABLE IF EXISTS inter_sales')
+
 df = spark.sql('SELECT * FROM inter_vendas')
 
 # Grava o DataFrame no formato Parquet
-destination_path = 'dbfs:/FileStore/datum/silver/olistbr-brazilian-ecommerce/inter_sales'
+destination_path = f'dbfs:/FileStore/datum/silver/olistbr-brazilian-ecommerce/{table_name}'
 df.write.mode('overwrite').parquet(destination_path)
 
-df.write.format("delta").mode('overwrite').save('dbfs:/FileStore/datum/tables/silver/inter_sales')
+df.write.format("delta").mode('overwrite').saveAsTable(table_name)
